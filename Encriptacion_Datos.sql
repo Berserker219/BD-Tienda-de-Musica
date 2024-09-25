@@ -1,7 +1,7 @@
 -- FUNCIONES Y TRIGGERS DE ENCRIPTACION
 -- Encriptación de atributos por medio de un algortimo de cifrado simetrico
 
--- FUCNIONES
+-- FUNCIONES
 
 -- Funcion de encriptación del atributo telefono
 CREATE OR REPLACE FUNCTION encriptar_telefono() RETURNS TRIGGER AS $$
