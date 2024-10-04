@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS provedor(
 CREATE TABLE IF NOT EXISTS provedor_producto(
 	id_provedor INT NOT NULL,
 	id_producto INT NOT NULL,
-	nombre_producto VARCHAR (45) NOT NULL),
+	nombre_producto VARCHAR (45) NOT NULL,
 --  Creación de llaves foráneas
 	CONSTRAINT fk_provedor_producto_provedor FOREIGN KEY (id_provedor) REFERENCES provedor(id_provedor) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT fk_provedor_producto_producto FOREIGN KEY (id_producto,nombre_producto) REFERENCES producto(id_producto,nombre_producto) ON DELETE CASCADE ON UPDATE CASCADE
