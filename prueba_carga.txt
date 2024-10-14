@@ -1,0 +1,46 @@
+PRUEBA DE CARGA USANDO pgbench
+
+pgbench -i -s 50 -U postgres TIENDA_MUSICA
+
+-i: Inicializa el benchmark, creando las tablas necesarias y generando datos.
+-s 50: Factor de escalado, que determina el tamaño de los datos generados. En este caso, 50 veces el tamaño por defecto.
+-U postgres: Utiliza el usuario postgres para conectarse a la base de datos.
+TIENDA_MUSICA: Nombre de la base de datos.
+
+
+dropping old tables...
+NOTICE:  la tabla ┬½pgbench_accounts┬╗ no existe, omitiendo
+NOTICE:  la tabla ┬½pgbench_branches┬╗ no existe, omitiendo
+NOTICE:  la tabla ┬½pgbench_history┬╗ no existe, omitiendo
+NOTICE:  la tabla ┬½pgbench_tellers┬╗ no existe, omitiendo
+creating tables...
+generating data (client-side)...
+5000000 of 5000000 tuples (100%) done (elapsed 61.42 s, remaining 0.00 s)
+vacuuming...
+creating primary keys...
+done in 85.50 s (drop tables 0.49 s, create tables 0.38 s, client-side generate 64.99 s, vacuum 0.34 s, primary keys 19.31 s).
+
+
+pgbench -c 10 -j 2 -T 60 -U postgres TIENDA_MUSICA
+
+-c 10: Especifica 10 conexiones concurrentes.
+-j 2: Especifica 2 hilos.
+-T 60: Ejecuta la prueba durante 60 segundos.
+-U postgres: Utiliza el usuario postgres para conectarse a la base de datos.
+TIENDA_MUSICA: Nombre de la base de datos.
+
+
+pgbench (16.2)
+starting vacuum...end.
+transaction type: <builtin: TPC-B (sort of)>
+scaling factor: 50
+query mode: simple
+number of clients: 10
+number of threads: 2
+maximum number of tries: 1
+duration: 60 s
+number of transactions actually processed: 22542
+number of failed transactions: 0 (0.000%)
+latency average = 26.750 ms
+initial connection time = 302.222 ms
+tps = 373.828230 (without initial connection time)
