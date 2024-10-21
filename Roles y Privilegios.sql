@@ -136,4 +136,4 @@ Permisos:
 -- Creación de rol usuario_mantenimiento
 CREATE ROLE usuario_mantenimiento WITH LOGIN PASSWORD 'iB]co5$v';
 -- Permisos para gestionar el rol usuario_mantenimiento
-GRANT SELECT, INSERT, UPDATE ON ALL TABLAS IN SCHEMA PUBLIC TO usuario_mantenimiento;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA PUBLIC TO usuario_mantenimiento;

@@ -1,43 +1,53 @@
 -- FUNCIONES Y TRIGGERS DE ENCRIPTACION
 -- Encriptación de atributos por medio de un algortimo de cifrado simetrico
 
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- FUNCIONES
 
 -- Funcion de encriptación del atributo telefono
+--DROP FUNCTION encriptar_telefono() CASCADE;
 CREATE OR REPLACE FUNCTION encriptar_telefono() RETURNS TRIGGER AS $$
 BEGIN
-    NEW.telefono := pgp_sym_encrypt(NEW.telefono, 'RA*Fco|,w^');
+	IF LENGTH(NEW.telefono) != 10 THEN
+        RAISE EXCEPTION 'El número de teléfono debe tener 10 dígitos';
+    END IF;
+    NEW.telefono := pgp_sym_encrypt(NEW.telefono::text, 'RA*Fco|,w^'::text);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 -- Funcion de encriptación del atributo ruta
+--DROP FUNCTION encriptar_ruta() CASCADE;
 CREATE OR REPLACE FUNCTION encriptar_ruta() RETURNS TRIGGER AS $$
 BEGIN
-	NEW.ruta := pgp_sym_encrypt(NEW.ruta, 'e!CND/.tD[');
+	NEW.ruta := pgp_sym_encrypt(NEW.ruta::text, 'e!CND/.tD['::text);
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 -- Función para encriptación de los atributos nombre,apellido_paterno y apellido_materno
+--DROP FUNCTION encriptar_nombre() CASCADE;
 CREATE OR REPLACE FUNCTION encriptar_nombre() RETURNS TRIGGER AS $$
 BEGIN
-	NEW.nombre := pgp_sym_encrypt(NEW.nombre, 'uCZs~)g\i}');
-	NEW.apellido_paterno := pgp_sym_encrypt(NEW.apellido_paterno, 'ARv-_@zv3y');
-	NEW.apellido_materno := pgp_sym_encrypt(NER.apellido_materno, 'MqCTb.c05x');
+	NEW.nombre := pgp_sym_encrypt(NEW.nombre::text, 'uCZs~)g\i}'::text);
+	NEW.apellido_paterno := pgp_sym_encrypt(NEW.apellido_paterno::text, 'ARv-_@zv3y'::text);
+	NEW.apellido_materno := pgp_sym_encrypt(NEW.apellido_materno::text, 'MqCTb.c05x'::text);
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 -- Función para encriptación de los atributos calle, colonia y numero
+--DROP FUNCTION encriptar_direccion() CASCADE;
 CREATE OR REPLACE FUNCTION encriptar_direccion() RETURNS TRIGGER AS $$
 BEGIN
-	NEW.calle := pgp_sym_encrypt(NEW.calle, '=<T0IzkC;m');
-	NEW.colonia := pgp_sym_encrypt(NEW.colonia, 'U>*~6pXwx:');
-	NEW.numero := pgp_sym_encrypt(NEW.numero, 'Fpx!fb;9zj');
+	NEW.calle := pgp_sym_encrypt(NEW.calle::text, '=<T0IzkC;m'::text);
+	NEW.colonia := pgp_sym_encrypt(NEW.colonia::text, 'U>*~6pXwx:'::text);
+	NEW.numero := pgp_sym_encrypt(NEW.numero::text, 'Fpx!fb;9zj'::text);  -- Conversión de numero a texto
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
 
 
 

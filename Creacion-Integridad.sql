@@ -3,13 +3,13 @@
 -- Creación de Tabla Album
 CREATE TABLE IF NOT EXISTS album(
 	id_album INT PRIMARY KEY,-- llave primaria
-	nombre VARCHAR (45) NOT NULL,
+	nombre VARCHAR (100) NOT NULL,
 	anio_album DATE NOT NULL
 );
 -- Creación de Tabla Artista
 CREATE TABLE IF NOT EXISTS artista(
 	id_artista INT PRIMARY KEY,-- llave primaria
-	nombre VARCHAR (45) NOT NULL
+	nombre VARCHAR (100) NOT NULL
 );
 -- Creación de Tabla de la relacion muchos a muchos Album-Artista
 CREATE TABLE IF NOT EXISTS album_artista(
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS album_artista(
 -- Creación de Tabla Genero_Músical
 CREATE TABLE IF NOT EXISTS genero_musical(
 	id_genero_musical INT PRIMARY KEY,-- llave primaria
-	nombre_genero VARCHAR (45) NOT NULL
+	nombre_genero VARCHAR (100) NOT NULL
 );
 -- Creación de Tabla de la relacion muchos a muchos Album-Genero_Músical
 CREATE TABLE IF NOT EXISTS album_genero_musical(
@@ -54,21 +54,21 @@ CREATE TABLE IF NOT EXISTS album_producto(
 -- Creación de Tabla Provedor_dirección
 CREATE TABLE IF NOT EXISTS provedor_direccion(
 	id_direccion INT PRIMARY KEY, -- llave primaria
-	calle VARCHAR(45),
-	colonia VARCHAR(45),
-	numero INT
+	calle bytea,
+	colonia bytea,
+	numero bytea
 );
 -- Creación de Tabla Provedor_Nombre
 CREATE TABLE IF NOT EXISTS provedor_nombre(
 	id_nombre INT PRIMARY KEY,-- llave primaria
-	nombre VARCHAR(45) NOT NULL,
-	apellido_paterno VARCHAR(45),
-	apellido_materno VARCHAR(45)
+	nombre bytea NOT NULL,
+	apellido_paterno bytea,
+	apellido_materno bytea
 );
 -- Creación de Tabla Provedor_Ruta
 CREATE TABLE IF NOT EXISTS provedor_ruta(
 	id_ruta INT PRIMARY KEY,-- llave primaria
-	ruta VARCHAR(45) NOT NULL
+	ruta bytea NOT NULL
 );
 -- Creación de Tabla Provedor
 CREATE TABLE IF NOT EXISTS provedor(
@@ -76,11 +76,9 @@ CREATE TABLE IF NOT EXISTS provedor(
 	id_ruta INT NOT NULL,
 	id_direccion INT NOT NULL,
 	id_nombre INT NOT NULL,
-	telefono VARCHAR(10) NOT NULL,
+	telefono bytea NOT NULL,
 --  llave primaria
 	PRIMARY KEY (id_provedor),
---  Integridad del Atributo Telefono para que solo tenga 10 numeros	
-	CONSTRAINT chk_telefono CHECK (telefono ~ '[0-9]{10}'),
 --  Creación de llaves foráneas 	
 	CONSTRAINT fk_proveedor_direccion FOREIGN KEY (id_direccion) REFERENCES provedor_direccion(id_direccion) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT fk_proveedor_ruta FOREIGN KEY (id_ruta) REFERENCES provedor_ruta(id_ruta) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -91,7 +89,7 @@ CREATE TABLE IF NOT EXISTS provedor(
 CREATE TABLE IF NOT EXISTS provedor_producto(
 	id_provedor INT NOT NULL,
 	id_producto INT NOT NULL,
-	nombre_producto VARCHAR (45) NOT NULL,
+	nombre_producto VARCHAR (100) NOT NULL,
 --  Creación de llaves foráneas
 	CONSTRAINT fk_provedor_producto_provedor FOREIGN KEY (id_provedor) REFERENCES provedor(id_provedor) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT fk_provedor_producto_producto FOREIGN KEY (id_producto,nombre_producto) REFERENCES producto(id_producto,nombre_producto) ON DELETE CASCADE ON UPDATE CASCADE
@@ -99,7 +97,7 @@ CREATE TABLE IF NOT EXISTS provedor_producto(
 -- Creación de Tabla Almacen
 CREATE TABLE IF NOT EXISTS almacen(
 	codigo_barras INT,
-	titulo VARCHAR(45),
+	titulo VARCHAR(100),
 	precio NUMERIC NOT NULL,
 	inventario INT NOT NULL,
 --  llave primaria 	
@@ -110,9 +108,9 @@ CREATE TABLE IF NOT EXISTS almacen(
 -- Creación de Tabla de la relacion muchos a muchos Producto_Almacen
 CREATE TABLE IF NOT EXISTS producto_almacen(
 	id_producto INT NOT NULL,
-	titulo VARCHAR(45) NOT NULL,
+	titulo VARCHAR(100) NOT NULL,
 	codigo_barras INT NOT NULL,
-	nombre_producto VARCHAR(45) NOT NULL,
+	nombre_producto VARCHAR(100) NOT NULL,
 --  Creación de llaves foráneas 	
 	CONSTRAINT fk_producto_almacen_producto FOREIGN KEY (id_producto, nombre_producto) REFERENCES producto(id_producto, nombre_producto) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT fk_producto_almacen_almacen FOREIGN KEY (codigo_barras, titulo) REFERENCES almacen(codigo_barras, titulo) ON DELETE CASCADE ON UPDATE CASCADE
@@ -126,7 +124,7 @@ CREATE TABLE IF NOT EXISTS compra_material(
 -- Creación de Tabla de la relacion muchos a muchos Producto-Compra_Material
 CREATE TABLE IF NOT EXISTS producto_compra_material(
 	id_producto INT NOT NULL,
-	nombre_producto VARCHAR(45) NOT NULL,
+	nombre_producto VARCHAR(100) NOT NULL,
 	id_compra INT NOT NULL,
 --  Creación de llaves foráneas 	
 	CONSTRAINT fk_producto_compra FOREIGN KEY (id_producto, nombre_producto) REFERENCES producto(id_producto, nombre_producto) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -135,28 +133,26 @@ CREATE TABLE IF NOT EXISTS producto_compra_material(
 -- Creación de Tabla Cliente_Nombre
 CREATE TABLE IF NOT EXISTS cliente_nombre(
 	id_nombre INT PRIMARY KEY,-- llave primaria
-	nombre VARCHAR(45) NOT NULL,
-	apellido_paterno VARCHAR(45),
-	apellido_materno VARCHAR(45)
+	nombre bytea NOT NULL,
+	apellido_paterno bytea,
+	apellido_materno bytea
 );
 -- Creación de Tabla Cliente_Dirección
 CREATE TABLE IF NOT EXISTS cliente_direccion(
 	id_direccion INT PRIMARY KEY,-- llave primaria
-	calle VARCHAR(45),
-	colonia VARCHAR(45),
-	numero INT
+	calle bytea,
+	colonia bytea,
+	numero bytea
 );
 -- Creación de Tabla Cliente
 CREATE TABLE IF NOT EXISTS cliente(
 	id_cliente INT PRIMARY KEY,-- llave primaria
 	id_nombre INT NOT NULL,
 	id_direccion INT NOT NULL,
-	telefono VARCHAR(10) NOT NULL,
+	telefono bytea NOT NULL,
 --  Creación de llaves foráneas 	
 	CONSTRAINT fk_cliente_nombre FOREIGN KEY (id_nombre) REFERENCES cliente_nombre(id_nombre) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_cliente_direccion FOREIGN KEY (id_direccion) REFERENCES cliente_direccion(id_direccion) ON DELETE CASCADE ON UPDATE CASCADE,
---  Integridad del Atributo Telefono para que solo tenga 10 numeros		
-	CONSTRAINT chk_telefono_cliente CHECK (telefono ~ '[0-9]{10}')
+	CONSTRAINT fk_cliente_direccion FOREIGN KEY (id_direccion) REFERENCES cliente_direccion(id_direccion) ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- Creación de Tabla de la relacion muchos a muchos Producto-Cliente
 CREATE TABLE IF NOT EXISTS producto_cliente(
@@ -170,14 +166,14 @@ CREATE TABLE IF NOT EXISTS producto_cliente(
 -- Creación de Tabla Sucursal_Dirección
 CREATE TABLE IF NOT EXISTS sucursal_direccion(
 	id_direccion INT PRIMARY KEY,-- llave primaria
-	calle VARCHAR(45),
-	colonia VARCHAR(45),
-	numero INT
+	calle bytea,
+	colonia bytea,
+	numero bytea
 );
 -- Creación de Tabla Sucursal
 CREATE TABLE IF NOT EXISTS sucursal(
 	id_sucursal INT PRIMARY KEY,-- llave primaria
-	nombre VARCHAR(45),
+	nombre VARCHAR(100),
 	id_direccion INT NOT NULL,
 --  Creación de llaves foráneas 	
 	CONSTRAINT fk_sucursal_direccion FOREIGN KEY (id_direccion) REFERENCES sucursal_direccion(id_direccion) ON DELETE CASCADE ON UPDATE CASCADE
@@ -194,16 +190,16 @@ CREATE TABLE IF NOT EXISTS producto_sucursal(
 -- Creación de Tabla Empleado_Nombre
 CREATE TABLE IF NOT EXISTS empleado_nombre(
 	id_nombre INT PRIMARY KEY,-- llave primaria
-	nombre VARCHAR(45) NOT NULL,
-	apellido_paterno VARCHAR(45),
-	apellido_materno VARCHAR(45)
+	nombre bytea NOT NULL,
+	apellido_paterno bytea,
+	apellido_materno bytea
 );
 -- Creación de Tabla Empleado_Dirección
 CREATE TABLE IF NOT EXISTS empleado_direccion(
 	id_direccion INT PRIMARY KEY,-- llave primaria
-	calle VARCHAR(45),
-	colonia VARCHAR(45),
-	numero INT
+	calle bytea,
+	colonia bytea,
+	numero bytea
 );
 -- Creación de Tabla Empleado
 CREATE TABLE IF NOT EXISTS empleado(
@@ -211,11 +207,10 @@ CREATE TABLE IF NOT EXISTS empleado(
 	id_nombre INT NOT NULL,
 	id_direccion INT NOT NULL,
 	id_sucursal INT NOT NULL,
-	telefono VARCHAR(10) NOT NULL,
+	telefono bytea NOT NULL,
 --  Creación de llaves foráneas 	
 	CONSTRAINT fk_empleado_nombre FOREIGN KEY (id_nombre) REFERENCES empleado_nombre(id_nombre) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT fk_empleado_direccion FOREIGN KEY (id_direccion) REFERENCES empleado_direccion(id_direccion) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_empleado_sucursal FOREIGN KEY (id_sucursal) REFERENCES sucursal(id_sucursal) ON DELETE CASCADE ON UPDATE CASCADE,
---  Integridad del Atributo Telefono para que solo tenga 10 numeros	
-	CONSTRAINT chk_telefono_empleado CHECK (telefono ~ '[0-9]{10}')
+	CONSTRAINT fk_empleado_sucursal FOREIGN KEY (id_sucursal) REFERENCES sucursal(id_sucursal) ON DELETE CASCADE ON UPDATE CASCADE
+
 );
