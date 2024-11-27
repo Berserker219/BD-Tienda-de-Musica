@@ -214,3 +214,17 @@ CREATE TABLE IF NOT EXISTS empleado(
 	CONSTRAINT fk_empleado_sucursal FOREIGN KEY (id_sucursal) REFERENCES sucursal(id_sucursal) ON DELETE CASCADE ON UPDATE CASCADE
 
 );
+
+-- Creación de Tabla Auditoria
+CREATE TABLE IF NOT EXISTS auditoria(
+	id_auditoria SERIAL PRIMARY KEY, 
+	tabla_afectada VARCHAR(100) NOT NULL,            --Nombre de la tabla afectada
+	id_registro INT NOT NULL,                        -- ID del registro afectado
+	operacion VARCHAR(10) NOT NULL,                  -- Tipo de operacíon: INSERT, UPDATE, DELETE
+	usuario VARCHAR(100),                            -- Usuario que realizó el cambio
+	fecha_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Fecha y hora del cambio
+	valores_antes JSONB,                             -- Valores antes del cambio (para UPDATE y DELETE)
+	valores_despues JSONB                            -- Valores despues del cambio(para INSERT y UPDATE)	
+);
+
+
