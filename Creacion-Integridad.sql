@@ -2,13 +2,13 @@
 
 -- Creación de Tabla Album
 CREATE TABLE IF NOT EXISTS album(
-	id_album INT PRIMARY KEY,-- llave primaria
-	nombre VARCHAR (100) NOT NULL,
+	id_album SERIAL PRIMARY KEY,-- llave primaria
+	nombre VARCHAR (100) NOT NULL UNIQUE,
 	anio_album DATE NOT NULL
 );
 -- Creación de Tabla Artista
 CREATE TABLE IF NOT EXISTS artista(
-	id_artista INT PRIMARY KEY,-- llave primaria
+	id_artista SERIAL PRIMARY KEY,-- llave primaria
 	nombre VARCHAR (100) NOT NULL
 );
 -- Creación de Tabla de la relacion muchos a muchos Album-Artista
@@ -17,12 +17,14 @@ CREATE TABLE IF NOT EXISTS album_artista(
 	id_artista INT NOT NULL,
 --  Creación de llaves foráneas 	
 	CONSTRAINT fk_album FOREIGN KEY (id_album) REFERENCES album(id_album) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_artista FOREIGN KEY (id_artista) REFERENCES artista(id_artista) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT fk_artista FOREIGN KEY (id_artista) REFERENCES artista(id_artista) ON DELETE CASCADE ON UPDATE CASCADE,
+--  Creación de llave primaria compuesta
+    PRIMARY KEY (id_album, id_artista)
 );
 -- Creación de Tabla Genero_Músical
 CREATE TABLE IF NOT EXISTS genero_musical(
-	id_genero_musical INT PRIMARY KEY,-- llave primaria
-	nombre_genero VARCHAR (100) NOT NULL
+	id_genero_musical SERIAL PRIMARY KEY,-- llave primaria
+	nombre_genero VARCHAR (100) NOT NULL UNIQUE
 );
 -- Creación de Tabla de la relacion muchos a muchos Album-Genero_Músical
 CREATE TABLE IF NOT EXISTS album_genero_musical(
@@ -30,189 +32,144 @@ CREATE TABLE IF NOT EXISTS album_genero_musical(
 	id_genero_musical INT NOT NULL,
 --  Creación de llaves foráneas 	
 	CONSTRAINT fk_album_genero FOREIGN KEY (id_album) REFERENCES album(id_album) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_genero_album FOREIGN KEY (id_genero_musical) REFERENCES genero_musical(id_genero_musical) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT fk_genero_album FOREIGN KEY (id_genero_musical) REFERENCES genero_musical(id_genero_musical) ON DELETE CASCADE ON UPDATE CASCADE,
+--  Creación de llave primaria compuesta
+    PRIMARY KEY (id_album, id_genero_musical)
 );
 -- Creación de Tabla Producto
 CREATE TABLE IF NOT EXISTS producto(
-	id_producto INT,
-	nombre_producto VARCHAR(25),
+	id_producto SERIAL PRIMARY KEY,
+	nombre_producto VARCHAR(25) NOT NULL,
 	descripcion TEXT NOT NULL,
 	precio NUMERIC NOT NULL,
-	existencia INT NOT NULL,
--- Creación de llave primaria compuesta, formada por id_producto y nombre_producto
-	PRIMARY KEY (id_producto, nombre_producto)
+	existencia INT NOT NULL
 );
 -- Creación de Tabla de la relacion muchos a muchos Album-Producto
 CREATE TABLE IF NOT EXISTS album_producto(
 	id_album INT NOT NULL,
 	id_producto INT NOT NULL,
-	nombre_producto VARCHAR(25) NOT NULL,
 --  Creación de llaves foráneas 	
 	CONSTRAINT fk_album_producto FOREIGN KEY (id_album) REFERENCES album(id_album) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_producto_album FOREIGN KEY (id_producto, nombre_producto) REFERENCES producto(id_producto, nombre_producto) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT fk_producto_album FOREIGN KEY (id_producto) REFERENCES producto(id_producto) ON DELETE CASCADE ON UPDATE CASCADE,
+--  Creación de llave primaria compuesta
+    PRIMARY KEY (id_album, id_producto)
 );
--- Creación de Tabla Provedor_dirección
-CREATE TABLE IF NOT EXISTS provedor_direccion(
-	id_direccion INT PRIMARY KEY, -- llave primaria
-	calle bytea,
-	colonia bytea,
-	numero bytea
-);
--- Creación de Tabla Provedor_Nombre
-CREATE TABLE IF NOT EXISTS provedor_nombre(
-	id_nombre INT PRIMARY KEY,-- llave primaria
+-- Creación de Tabla Proveedor
+CREATE TABLE IF NOT EXISTS proveedor(
+	id_proveedor SERIAL PRIMARY KEY,
 	nombre bytea NOT NULL,
 	apellido_paterno bytea,
-	apellido_materno bytea
-);
--- Creación de Tabla Provedor_Ruta
-CREATE TABLE IF NOT EXISTS provedor_ruta(
-	id_ruta INT PRIMARY KEY,-- llave primaria
-	ruta bytea NOT NULL
-);
--- Creación de Tabla Provedor
-CREATE TABLE IF NOT EXISTS provedor(
-	id_provedor INT NOT NULL,
-	id_ruta INT NOT NULL,
-	id_direccion INT NOT NULL,
-	id_nombre INT NOT NULL,
-	telefono bytea NOT NULL,
---  llave primaria
-	PRIMARY KEY (id_provedor),
---  Creación de llaves foráneas 	
-	CONSTRAINT fk_proveedor_direccion FOREIGN KEY (id_direccion) REFERENCES provedor_direccion(id_direccion) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_proveedor_ruta FOREIGN KEY (id_ruta) REFERENCES provedor_ruta(id_ruta) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_proveedor_nombre FOREIGN KEY (id_nombre) REFERENCES provedor_nombre(id_nombre) ON DELETE CASCADE ON UPDATE CASCADE
+	apellido_materno bytea,
+    calle bytea,
+	colonia bytea,
+	numero bytea,
+    ruta bytea NOT NULL,
+	telefono bytea NOT NULL
 );
 
--- Creación de Tabla de la relacion muchos a muchos Provedor-Producto
-CREATE TABLE IF NOT EXISTS provedor_producto(
-	id_provedor INT NOT NULL,
+-- Creación de Tabla de la relacion muchos a muchos Proveedor-Producto
+CREATE TABLE IF NOT EXISTS proveedor_producto(
+	id_proveedor INT NOT NULL,
 	id_producto INT NOT NULL,
-	nombre_producto VARCHAR (100) NOT NULL,
 --  Creación de llaves foráneas
-	CONSTRAINT fk_provedor_producto_provedor FOREIGN KEY (id_provedor) REFERENCES provedor(id_provedor) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_provedor_producto_producto FOREIGN KEY (id_producto,nombre_producto) REFERENCES producto(id_producto,nombre_producto) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT fk_proveedor_producto_proveedor FOREIGN KEY (id_proveedor) REFERENCES proveedor(id_proveedor) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_proveedor_producto_producto FOREIGN KEY (id_producto) REFERENCES producto(id_producto) ON DELETE CASCADE ON UPDATE CASCADE,
+--  Creación de llave primaria compuesta
+    PRIMARY KEY (id_proveedor, id_producto)
 );
 -- Creación de Tabla Almacen
 CREATE TABLE IF NOT EXISTS almacen(
+    id_almacen SERIAL PRIMARY KEY,
 	codigo_barras INT,
 	titulo VARCHAR(100),
 	precio NUMERIC NOT NULL,
 	inventario INT NOT NULL,
---  llave primaria 	
-	PRIMARY KEY (codigo_barras, titulo),
 --  Integridad del codigo_barras para que solo lo conforme los numeros	entre 10000000 y 999999999
-	CONSTRAINT chk_codigo_barras CHECK (codigo_barras BETWEEN 10000000 AND 999999999)
+	CONSTRAINT chk_codigo_barras CHECK (codigo_barras BETWEEN 10000000 AND 999999999),
+    UNIQUE (codigo_barras, titulo)
 );
 -- Creación de Tabla de la relacion muchos a muchos Producto_Almacen
 CREATE TABLE IF NOT EXISTS producto_almacen(
 	id_producto INT NOT NULL,
-	titulo VARCHAR(100) NOT NULL,
-	codigo_barras INT NOT NULL,
-	nombre_producto VARCHAR(100) NOT NULL,
+	id_almacen INT NOT NULL,
 --  Creación de llaves foráneas 	
-	CONSTRAINT fk_producto_almacen_producto FOREIGN KEY (id_producto, nombre_producto) REFERENCES producto(id_producto, nombre_producto) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_producto_almacen_almacen FOREIGN KEY (codigo_barras, titulo) REFERENCES almacen(codigo_barras, titulo) ON DELETE CASCADE ON UPDATE CASCADE
+	CONSTRAINT fk_producto_almacen_producto FOREIGN KEY (id_producto) REFERENCES producto(id_producto) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_producto_almacen_almacen FOREIGN KEY (id_almacen) REFERENCES almacen(id_almacen) ON DELETE CASCADE ON UPDATE CASCADE,
+--  Creación de llave primaria compuesta
+    PRIMARY KEY (id_producto, id_almacen)
 );
--- Creación de Tabla Compra_Material
-CREATE TABLE IF NOT EXISTS compra_material(
-	id_compra INT PRIMARY KEY,-- llave primaria
+-- Creación de Tabla Compra
+CREATE TABLE IF NOT EXISTS compra(
+	id_compra SERIAL PRIMARY KEY,
 	fecha DATE NOT NULL,
 	total INT NOT NULL
 );
--- Creación de Tabla de la relacion muchos a muchos Producto-Compra_Material
-CREATE TABLE IF NOT EXISTS producto_compra_material(
+-- Creación de Tabla de la relacion muchos a muchos Producto-Compra (Detalle Compra)
+CREATE TABLE IF NOT EXISTS detalle_compra(
 	id_producto INT NOT NULL,
-	nombre_producto VARCHAR(100) NOT NULL,
 	id_compra INT NOT NULL,
+    cantidad INT NOT NULL,
+    costo_unitario NUMERIC NOT NULL,
 --  Creación de llaves foráneas 	
-	CONSTRAINT fk_producto_compra FOREIGN KEY (id_producto, nombre_producto) REFERENCES producto(id_producto, nombre_producto) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_compra_producto FOREIGN KEY (id_compra) REFERENCES compra_material(id_compra) ON DELETE CASCADE ON UPDATE CASCADE
-);
--- Creación de Tabla Cliente_Nombre
-CREATE TABLE IF NOT EXISTS cliente_nombre(
-	id_nombre INT PRIMARY KEY,-- llave primaria
-	nombre bytea NOT NULL,
-	apellido_paterno bytea,
-	apellido_materno bytea
-);
--- Creación de Tabla Cliente_Dirección
-CREATE TABLE IF NOT EXISTS cliente_direccion(
-	id_direccion INT PRIMARY KEY,-- llave primaria
-	calle bytea,
-	colonia bytea,
-	numero bytea
+	CONSTRAINT fk_producto_compra FOREIGN KEY (id_producto) REFERENCES producto(id_producto) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_compra_producto FOREIGN KEY (id_compra) REFERENCES compra(id_compra) ON DELETE CASCADE ON UPDATE CASCADE,
+--  Creación de llave primaria compuesta
+    PRIMARY KEY (id_producto, id_compra)
 );
 -- Creación de Tabla Cliente
 CREATE TABLE IF NOT EXISTS cliente(
-	id_cliente INT PRIMARY KEY,-- llave primaria
-	id_nombre INT NOT NULL,
-	id_direccion INT NOT NULL,
-	telefono bytea NOT NULL,
---  Creación de llaves foráneas 	
-	CONSTRAINT fk_cliente_nombre FOREIGN KEY (id_nombre) REFERENCES cliente_nombre(id_nombre) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_cliente_direccion FOREIGN KEY (id_direccion) REFERENCES cliente_direccion(id_direccion) ON DELETE CASCADE ON UPDATE CASCADE
-);
--- Creación de Tabla de la relacion muchos a muchos Producto-Cliente
-CREATE TABLE IF NOT EXISTS producto_cliente(
-	id_producto INT NOT NULL,
-	nombre_producto VARCHAR(25) NOT NULL,
-	id_cliente INT NOT NULL,
---  Creación de llaves foráneas 	
-	CONSTRAINT fk_producto_cliente_producto FOREIGN KEY (id_producto, nombre_producto) REFERENCES producto(id_producto, nombre_producto) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_producto_cliente_cliente FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente) ON DELETE CASCADE ON UPDATE CASCADE
-);
--- Creación de Tabla Sucursal_Dirección
-CREATE TABLE IF NOT EXISTS sucursal_direccion(
-	id_direccion INT PRIMARY KEY,-- llave primaria
-	calle bytea,
+	id_cliente SERIAL PRIMARY KEY,
+	nombre bytea NOT NULL,
+	apellido_paterno bytea,
+	apellido_materno bytea,
+    calle bytea,
 	colonia bytea,
-	numero bytea
+	numero bytea,
+	telefono bytea NOT NULL
+);
+-- Creación de Tabla Venta (antes producto_cliente)
+CREATE TABLE IF NOT EXISTS venta(
+    id_venta SERIAL PRIMARY KEY,
+	id_producto INT NOT NULL,
+	id_cliente INT NOT NULL,
+    fecha DATE NOT NULL,
+    cantidad INT NOT NULL,
+    precio_venta NUMERIC NOT NULL,
+--  Creación de llaves foráneas 	
+	CONSTRAINT fk_venta_producto FOREIGN KEY (id_producto) REFERENCES producto(id_producto) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_venta_cliente FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente) ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- Creación de Tabla Sucursal
 CREATE TABLE IF NOT EXISTS sucursal(
-	id_sucursal INT PRIMARY KEY,-- llave primaria
-	nombre VARCHAR(100),
-	id_direccion INT NOT NULL,
---  Creación de llaves foráneas 	
-	CONSTRAINT fk_sucursal_direccion FOREIGN KEY (id_direccion) REFERENCES sucursal_direccion(id_direccion) ON DELETE CASCADE ON UPDATE CASCADE
+	id_sucursal SERIAL PRIMARY KEY,
+	nombre VARCHAR(100) UNIQUE,
+    calle bytea,
+	colonia bytea,
+	numero bytea
 );
 -- Creación de Tabla de la relacion muchos a muchos Producto-Sucursal
 CREATE TABLE IF NOT EXISTS producto_sucursal(
 	id_producto INT NOT NULL,
-	nombre_producto VARCHAR(25) NOT NULL,
 	id_sucursal INT NOT NULL,
 --  Creación de llaves foráneas 	
-	CONSTRAINT fk_producto_sucursal_producto FOREIGN KEY (id_producto, nombre_producto) REFERENCES producto(id_producto, nombre_producto) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_producto_sucursal_sucursal FOREIGN KEY (id_sucursal) REFERENCES sucursal(id_sucursal) ON DELETE CASCADE ON UPDATE CASCADE
-);
--- Creación de Tabla Empleado_Nombre
-CREATE TABLE IF NOT EXISTS empleado_nombre(
-	id_nombre INT PRIMARY KEY,-- llave primaria
-	nombre bytea NOT NULL,
-	apellido_paterno bytea,
-	apellido_materno bytea
-);
--- Creación de Tabla Empleado_Dirección
-CREATE TABLE IF NOT EXISTS empleado_direccion(
-	id_direccion INT PRIMARY KEY,-- llave primaria
-	calle bytea,
-	colonia bytea,
-	numero bytea
+	CONSTRAINT fk_producto_sucursal_producto FOREIGN KEY (id_producto) REFERENCES producto(id_producto) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_producto_sucursal_sucursal FOREIGN KEY (id_sucursal) REFERENCES sucursal(id_sucursal) ON DELETE CASCADE ON UPDATE CASCADE,
+--  Creación de llave primaria compuesta
+    PRIMARY KEY (id_producto, id_sucursal)
 );
 -- Creación de Tabla Empleado
 CREATE TABLE IF NOT EXISTS empleado(
-	id_empleado INT PRIMARY KEY,-- llave primaria
-	id_nombre INT NOT NULL,
-	id_direccion INT NOT NULL,
+	id_empleado SERIAL PRIMARY KEY,
 	id_sucursal INT NOT NULL,
+	nombre bytea NOT NULL,
+	apellido_paterno bytea,
+	apellido_materno bytea,
+    calle bytea,
+	colonia bytea,
+	numero bytea,
 	telefono bytea NOT NULL,
 --  Creación de llaves foráneas 	
-	CONSTRAINT fk_empleado_nombre FOREIGN KEY (id_nombre) REFERENCES empleado_nombre(id_nombre) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_empleado_direccion FOREIGN KEY (id_direccion) REFERENCES empleado_direccion(id_direccion) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT fk_empleado_sucursal FOREIGN KEY (id_sucursal) REFERENCES sucursal(id_sucursal) ON DELETE CASCADE ON UPDATE CASCADE
-
 );
 
 -- Creación de Tabla Auditoria
@@ -226,5 +183,3 @@ CREATE TABLE IF NOT EXISTS auditoria(
 	valores_antes JSONB,                             -- Valores antes del cambio (para UPDATE y DELETE)
 	valores_despues JSONB                            -- Valores despues del cambio(para INSERT y UPDATE)	
 );
-
-
